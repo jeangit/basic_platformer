@@ -1,11 +1,10 @@
--- $$DATE$$ : mar. 15 mai 2018 (21:20:38)
+-- $$DATE$$ : mer. 16 mai 2018 (19:19:39)
 
 local draw = require"draw"
 
 -- world bounds
 local world_height, world_width
 local world = {}
-local tilesize = 0
 local screen_width, screen_height
 
 local function extract_line( l, tile_per_line)
@@ -20,11 +19,11 @@ local function extract_line( l, tile_per_line)
 end
 
 
-local function init_world( mapname, _tilesize)
-  tilesize = _tilesize  
+local function init_world( mapname, tilesize)
+  world.tilesize = tilesize  
   local is_ok = true
   screen_width, screen_height = love.graphics.getDimensions()
-  local tile_per_line = screen_width/_tilesize
+  local tile_per_line = screen_width/tilesize
 
   local hf = io.open( mapname)
   if hf then
@@ -52,11 +51,12 @@ end
 local function show_world()
   local dict = { [43] = draw.quad, [47] = draw.tri_up, [92] = draw.tri_down } 
   local num_line = 0
+  local ts = world.tilesize
   --local start = screen_height+world_height*tilesize
   for line = world_height,1,-1 do
     for i,tile in ipairs(world[line]) do
       if (dict[tile]) then
-        dict[tile](i*tilesize, screen_height-num_line*tilesize,tilesize) 
+        dict[tile](i*ts, screen_height-num_line*ts, ts) 
       end
     end
     num_line = num_line+1
