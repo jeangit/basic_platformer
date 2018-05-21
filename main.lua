@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 16 mai 2018 (19:53:58)
+-- $$DATE$$ : lun. 21 mai 2018 (16:53:58)
 
 local world = require"world"
 local draw = require"draw"
@@ -10,22 +10,14 @@ local keys = {}
 function love.load()
   local tilesize = 32
   assert (world.init( "world.txt", tilesize))
-  player.init()
+  player.init(world)
   --world.show_ascii()
 end
 
 function love.update()
   if keys["escape"] then love.event.quit() end
-  if keys["left"] then
-    player.move(-1,0)
-  elseif keys["right"] then
-    player.move (1,0)
-  end
-  if keys["space"] then
-    player.jump()
-  end
 
-
+  player.keyb_event(keys)
 end
 
 
