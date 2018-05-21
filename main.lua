@@ -1,4 +1,4 @@
--- $$DATE$$ : lun. 21 mai 2018 (16:53:58)
+-- $$DATE$$ : lun. 21 mai 2018 (18:37:43)
 
 local world = require"world"
 local draw = require"draw"
@@ -18,6 +18,7 @@ function love.update()
   if keys["escape"] then love.event.quit() end
 
   player.keyb_event(keys)
+  player.apply_gravity()
 end
 
 

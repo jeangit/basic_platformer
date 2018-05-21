@@ -1,4 +1,4 @@
--- $$DATE$$ : lun. 21 mai 2018 (16:53:34)
+-- $$DATE$$ : lun. 21 mai 2018 (21:11:56)
 
 local draw = require"draw"
 
@@ -74,11 +74,20 @@ end
 -- origin : 1,world_height
 local function get_tile_world(x_pixel,y_pixel)
   local ts = world.tilesize
-  local y_tile = math.floor( (screen_height - y_pixel) / ts )
+  local y_tile = math.floor( (screen_height - y_pixel) / ts ) 
   local x_tile = math.floor( x_pixel / ts ) + 1
-
-  print(x_tile, y_tile)
-  return world[world_height-y_tile][x_tile]
+  local tile = world[world_height-y_tile][x_tile]
+  --print(x_tile, y_tile, tile)
+  return tile, x_tile, y_tile+1
 end
 
-return { show_ascii = show_ascii_world, show = show_world, init = init_world, get_tile = get_tile_world }
+local function get_tilesize_world()
+  return world.tilesize
+end
+
+local function get_screen_dims_in_pixels()
+  return screen_width, screen_height
+end
+
+
+return { show_ascii = show_ascii_world, show = show_world, init = init_world, get_tile = get_tile_world, get_tilesize = get_tilesize_world, screen_dims = get_screen_dims_in_pixels }
