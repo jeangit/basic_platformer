@@ -1,11 +1,11 @@
--- $$DATE$$ : lun. 21 mai 2018 (18:37:43)
+-- $$DATE$$ : mar. 22 mai 2018 (15:10:28)
 
 local world = require"world"
 local draw = require"draw"
 local player = require"player"
 
 local keys = {}
-
+local refresh = 1/70
 
 function love.load()
   local tilesize = 32
@@ -14,16 +14,21 @@ function love.load()
   --world.show_ascii()
 end
 
-function love.update()
+local sum_dt = 0
+function love.update(dt)
   if keys["escape"] then love.event.quit() end
 
-  player.keyb_event(keys)
-  player.apply_gravity()
+  sum_dt = sum_dt + dt
+  if sum_dt >= refresh then
+    sum_dt = 0
+    player.keyb_event(keys)
+    player.apply_gravity()
+  end
 end
 
 
 function love.draw()
-  love.graphics.clear(0.1,0.3,0.7)
+  love.graphics.clear(0.3,0.3,0.3)
   world.show()
   player.draw()
 end

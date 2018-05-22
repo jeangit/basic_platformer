@@ -1,11 +1,12 @@
--- $$DATE$$ : lun. 21 mai 2018 (21:16:21)
+-- $$DATE$$ : mar. 22 mai 2018 (15:43:38)
 
 local x,y = 0,0
-local jump_force_base = 10
-local jump_force = jump_force_base
-local speed_base = 0.5
+local jump_force_max = 50
+local jump_force = 0
+local is_jumping = false
+local speed_base = 1.5
 local speed = speed_base
-local gravity_base = 0.1
+local gravity_base = 0.9
 local gravity = gravity_base
 local world = {}
 local screen_width, screen_height
@@ -16,7 +17,7 @@ function player_init(w)
   world = w
   screen_width, screen_height = world.screen_dims()
   x = 20
-  y = 250
+  y = 450
 end
 
 function player_draw()
@@ -42,13 +43,25 @@ end
 
 
 function player_apply_gravity()
+  -- le joueur est peut-être en train de sauter
+  if is_jumping then
+    jump_force = jump_force - jump_force/4
+    if jump_force < 1 then
+      jump_force = 0
+      speed = speed_base
+      is_jumping = false
+    else
+      y = y - jump_force
+    end
+  end
+
+
   -- pour appliquer la gravité, il faut
   -- tester sous le joueur.
+  y=y+gravity
+  gravity=gravity+gravity_base/2
   local tile, x_tile,y_tile = player_get_tile(x,y+1)
-  if tile == 0 then
-    y=y+gravity
-    gravity=gravity+gravity_base/2
-  else
+  if tile ~= 0 then
     -- se replacer sur la bonne tuile
     y = screen_height - y_tile*world.get_tilesize()
     gravity=gravity_base
@@ -57,12 +70,12 @@ end
 
 
 function player_jump()
-  speed = speed_base*3
-  y = y + jump_force
-  jump_force = jump_force - 2
-  if jump_force < -10 then
-    jump_force = jump_force_base
-    speed = speed_base
+  -- on ne peut sauter que si on n'est pas déjà en train de
+  -- le faire, et que si on se trouve sur une tuile solide
+  if not is_jumping and player_get_tile(x,y+1) ~= 0 then
+    speed = speed_base*3
+    is_jumping = true
+    jump_force = jump_force_max
   end
 end
 
