@@ -1,9 +1,9 @@
--- $$DATE$$ : lun. 21 mai 2018 (21:11:56)
+-- $$DATE$$ : mer. 23 mai 2018 (10:30:35)
 
 local draw = require"draw"
 
 -- world bounds
-local world_height, world_width
+local world_height, world_width = 0,0
 local world = {}
 local screen_width, screen_height
 
@@ -74,7 +74,7 @@ end
 -- origin : 1,world_height
 local function get_tile_world(x_pixel,y_pixel)
   local ts = world.tilesize
-  local y_tile = math.floor( (screen_height - y_pixel) / ts ) 
+  local y_tile = math.floor( (screen_height - y_pixel) / ts )
   local x_tile = math.floor( x_pixel / ts ) + 1
   local tile = world[world_height-y_tile][x_tile]
   --print(x_tile, y_tile, tile)
