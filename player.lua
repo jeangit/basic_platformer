@@ -1,4 +1,4 @@
--- $$DATE$$ : jeu. 24 mai 2018 (15:24:01)
+-- $$DATE$$ : jeu. 24 mai 2018 (22:40:31)
 
 local x,y = 0,0
 
@@ -9,7 +9,7 @@ local jump_force = 0
 local is_jumping = false
 local speed_base = 1 -- essayer avec des valeurs non multiples de tilesize
 local speed = speed_base
-local gravity_base = 0.9
+local gravity_base = 1.1 --1.1 --doit être > à 1, pour éviter un micro-saut avec la gravité
 local gravity = gravity_base
 
 local right_slope=47 -- /
@@ -59,6 +59,7 @@ function player_apply_gravity()
 
   -- le joueur est peut-être en train de sauter
   if is_jumping then
+    print("jump")
     jump_force = jump_force - jump_force/4
     if jump_force < 1 then
       jump_force = 0
@@ -72,15 +73,22 @@ function player_apply_gravity()
 
   -- pour appliquer la gravité, il faut
   -- tester sous le joueur.
+  --if player_get_tile(x+player_middle, y+gravity) == 0 then
   y=y+gravity
   gravity=gravity+gravity_base/2
+  --end
+
   -- y-1 pour tester la tuile incrite dans la bounding-box du joueur
-  local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-1)
+  local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-2)
+  --local foo_bar = player_get_tile(x+player_middle, y-2)
+  --print(tile,foo_bar,x_tile,y_tile)
   if tile ~= 0 then
     y = screen_height - y_tile*world.get_tilesize()
+
     local fx_slope = slopes[tile]
     if fx_slope then
-      local ajustement = fx_slope() --tilesize-(x+player_middle)%tilesize
+      local ajustement = fx_slope()
+      print(ajustement)
       -- le « + tilesize » sert à le remettre à la base de la tuile pentue
       y = y + tilesize - ajustement
     end

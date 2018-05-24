@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 23 mai 2018 (15:27:01)
+-- $$DATE$$ : jeu. 24 mai 2018 (20:04:22)
 
 local world = require"world"
 local draw = require"draw"
@@ -9,7 +9,7 @@ local refresh = 1/70
 
 function love.load()
   local tilesize = 32
-  assert (world.init( "world.txt", tilesize))
+  assert (world.init( "data/world.txt", tilesize))
   player.init(world)
   --world.show_ascii()
 end

@@ -1,4 +1,4 @@
--- $$DATE$$ : jeu. 24 mai 2018 (15:25:03)
+-- $$DATE$$ : jeu. 24 mai 2018 (21:34:51)
 
 local draw = require"draw"
 
@@ -76,6 +76,7 @@ end
 -- ainsi que ses coordonnées exprimées en tuiles.
 -- origine : 1,world_height
 local function get_tile_world(x_pixel,y_pixel)
+  --print("get_tile_world", x_pixel, y_pixel)
   local ts = world.tilesize
   local y_tile = math.floor( (screen_height - y_pixel) / ts )
   local x_tile = math.floor( x_pixel / ts ) + 1
