@@ -1,4 +1,4 @@
--- $$DATE$$ : jeu. 24 mai 2018 (12:01:40)
+-- $$DATE$$ : jeu. 24 mai 2018 (15:24:01)
 
 local x,y = 0,0
 
@@ -13,7 +13,7 @@ local gravity_base = 0.9
 local gravity = gravity_base
 
 local right_slope=47 -- /
-local pente = 0 -- ajustement y sur tuiles inclinées
+local left_slope=92 -- \
 local world = {}
 -- stocker quelques valeurs intéressantes venant de world
 local screen_width, screen_height
@@ -32,7 +32,7 @@ end
 function player_draw()
   local r, g, b, a = love.graphics.getColor( )
   love.graphics.setColor( 0.3,0.9,0.5)
-  draw.quad(x, y+pente, player_size, true)
+  draw.quad(x, y, player_size, true)
   love.graphics.setColor( r,g,b,a)
 end
 
@@ -45,22 +45,18 @@ function player_move(dir_x,dir_y)
   local new_x = x + (dir_x * speed)
   local new_y = y + (dir_y * speed)
 
-  pente = 0
   x = new_x
   y = new_y
 
-  --[[
-  if dir_x == 1 and player_get_tile(new_x+player_size, new_y) == right_slope then
-    -- il faut remonter sur une valeur linéaire
-    pente = -((x+player_size)%tilesize)
-    if (pente==0) then y=y-(tilesize*2) end
-    print("pente sur droite",new_y,pente)
-  end
-  --]]
 end
 
 
 function player_apply_gravity()
+  local slopes = {
+    [right_slope] = function() return (x+player_middle)%tilesize end,
+    [left_slope] = function() return tilesize-((x+player_middle)%tilesize) end
+  }
+
   -- le joueur est peut-être en train de sauter
   if is_jumping then
     jump_force = jump_force - jump_force/4
@@ -82,11 +78,11 @@ function player_apply_gravity()
   local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-1)
   if tile ~= 0 then
     y = screen_height - y_tile*world.get_tilesize()
-    if tile == right_slope then
-      local ajustement = (x+player_middle)%tilesize
+    local fx_slope = slopes[tile]
+    if fx_slope then
+      local ajustement = fx_slope() --tilesize-(x+player_middle)%tilesize
       -- le « + tilesize » sert à le remettre à la base de la tuile pentue
       y = y + tilesize - ajustement
-      print (ajustement)
     end
     gravity=gravity_base
   end

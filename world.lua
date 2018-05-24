@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 23 mai 2018 (10:30:35)
+-- $$DATE$$ : jeu. 24 mai 2018 (15:25:03)
 
 local draw = require"draw"
 
@@ -71,7 +71,10 @@ local function show_world()
   end
 end
 
--- origin : 1,world_height
+
+-- retourne la valeur de la tuile située à une coordonnée pixelesque
+-- ainsi que ses coordonnées exprimées en tuiles.
+-- origine : 1,world_height
 local function get_tile_world(x_pixel,y_pixel)
   local ts = world.tilesize
   local y_tile = math.floor( (screen_height - y_pixel) / ts )
