@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 23 mai 2018 (19:55:58)
+-- $$DATE$$ : jeu. 24 mai 2018 (12:01:40)
 
 local x,y = 0,0
 
@@ -49,13 +49,14 @@ function player_move(dir_x,dir_y)
   x = new_x
   y = new_y
 
+  --[[
   if dir_x == 1 and player_get_tile(new_x+player_size, new_y) == right_slope then
     -- il faut remonter sur une valeur linéaire
     pente = -((x+player_size)%tilesize)
     if (pente==0) then y=y-(tilesize*2) end
     print("pente sur droite",new_y,pente)
   end
-
+  --]]
 end
 
 
@@ -77,10 +78,16 @@ function player_apply_gravity()
   -- tester sous le joueur.
   y=y+gravity
   gravity=gravity+gravity_base/2
-  local tile, x_tile,y_tile = player_get_tile(x+player_middle, y+1)
+  -- y-1 pour tester la tuile incrite dans la bounding-box du joueur
+  local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-1)
   if tile ~= 0 then
-    -- se replacer sur la bonne tuile
     y = screen_height - y_tile*world.get_tilesize()
+    if tile == right_slope then
+      local ajustement = (x+player_middle)%tilesize
+      -- le « + tilesize » sert à le remettre à la base de la tuile pentue
+      y = y + tilesize - ajustement
+      print (ajustement)
+    end
     gravity=gravity_base
   end
 end
@@ -102,7 +109,7 @@ function player_keyboard_event(keys)
     player_move(-1,0)
   elseif keys["right"] then
     player_move (1,0)
-    keys["right"]=false
+    -- keys["right"]=false -- debug pour avancer pixel par pixel
   end
   if keys["up"] then
     player_move (0,-1)
