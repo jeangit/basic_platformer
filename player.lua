@@ -1,4 +1,4 @@
--- $$DATE$$ : ven. 25 mai 2018 (11:39:09)
+-- $$DATE$$ : ven. 25 mai 2018 (15:29:04)
 
 local x,y = 0,0
 
@@ -120,6 +120,12 @@ function player_keyboard_event(keys)
   end
   if keys["space"] then
     player_jump()
+  end
+
+  if keys["rshift"] or keys["lshift"] then
+    -- SAUVAGERIE! (c'est pour débugger, chef!)
+    keys["right"]=false
+    keys["left"]=false
   end
 end
 
