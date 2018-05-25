@@ -1,4 +1,4 @@
--- $$DATE$$ : jeu. 24 mai 2018 (22:40:31)
+-- $$DATE$$ : ven. 25 mai 2018 (11:39:09)
 
 local x,y = 0,0
 
@@ -9,7 +9,7 @@ local jump_force = 0
 local is_jumping = false
 local speed_base = 1 -- essayer avec des valeurs non multiples de tilesize
 local speed = speed_base
-local gravity_base = 1.1 --1.1 --doit être > à 1, pour éviter un micro-saut avec la gravité
+local gravity_base = 0.9 -- doit être inférieur à 1 pour éviter un problème de scintillement
 local gravity = gravity_base
 
 local right_slope=47 -- /
@@ -71,17 +71,15 @@ function player_apply_gravity()
   end
 
 
-  -- pour appliquer la gravité, il faut
-  -- tester sous le joueur.
-  --if player_get_tile(x+player_middle, y+gravity) == 0 then
+  -- application systématique de la gravité
   y=y+gravity
   gravity=gravity+gravity_base/2
-  --end
+  -- test y+1 : serons-nous dans une brique après prochaine application de la gravité ?
+  -- ( si oui: y-1 -> workaround anti-scintillement du joueur )
+  if player_get_tile(x+player_middle,y+1)~=0 then y=y-gravity_base end
 
   -- y-1 pour tester la tuile incrite dans la bounding-box du joueur
-  local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-2)
-  --local foo_bar = player_get_tile(x+player_middle, y-2)
-  --print(tile,foo_bar,x_tile,y_tile)
+  local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-1)
   if tile ~= 0 then
     y = screen_height - y_tile*world.get_tilesize()
 
