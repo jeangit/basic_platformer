@@ -9,7 +9,7 @@ It's just for implementing deadly boring things, but please, have a look.
 `pacman -S love`
  _(or equivalent)_
 
-`love platformer/`
+`cd ~/sources/alien/platformer/ && love .`
 _(yihaaa !)_
 
 ### You are on Debian :scream:
