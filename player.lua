@@ -1,4 +1,4 @@
--- $$DATE$$ : ven. 25 mai 2018 (15:29:04)
+-- $$DATE$$ : ven. 25 mai 2018 (18:53:37)
 
 local x,y = 0,0
 
@@ -86,6 +86,7 @@ function player_apply_gravity()
     local fx_slope = slopes[tile]
     if fx_slope then
       local ajustement = fx_slope()
+      --if ajustement==0 then ajustement=-1 end
       print(ajustement)
       -- le « + tilesize » sert à le remettre à la base de la tuile pentue
       y = y + tilesize - ajustement
