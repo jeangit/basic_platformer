@@ -1,9 +1,9 @@
--- $$DATE$$ : jeu. 24 mai 2018 (21:34:51)
+-- $$DATE$$ : sam. 26 mai 2018 (20:08:43)
 
 local draw = require"draw"
 
 -- world bounds
-local world_height, world_width = 0,0
+local world_height, world_width = 0,0 --donné en tuiles
 local world = {}
 local screen_width, screen_height
 
@@ -56,16 +56,26 @@ local function show_ascii_world()
 end
 
 -- pour l'instant, on dessine à partir de l'origine: 1,height_world
-local function show_world()
-  local dict = { [43] = draw.quad, [47] = draw.tri_up, [92] = draw.tri_down }
+local function show_world( cam_x,cam_y)
+  local drawfx = { [43] = draw.quad, [47] = draw.tri_up, [92] = draw.tri_down }
   local num_line = 0
   local ts = world.tilesize
   --local start = screen_height+world_height*tilesize
+
+  local start_tile_x = math.floor(cam_x / ts) -- première tuile à lire sur une ligne
+  --local offset_x = ts - (cam_x % ts) -- décalage x par rapport à position caméra
+  local offset_x = (cam_x % ts) - ts -- décalage x par rapport à position caméra
+  --print(start_tile_x, offset_x)
+  if start_tile_x == 0 then start_tile_x = nil end -- ajuster éventuellement index pour fonction «next»
+  print(start_tile_x)
   for line = world_height,1,-1 do
-    for i,tile in ipairs(world[line]) do
-      if (dict[tile]) then
-        dict[tile]((i-1)*ts, screen_height-num_line*ts, ts)
+    local index = 0
+    for _,tile in next,world[line],start_tile_x do -- nil = 1er element, 1 = 2eme element ligne,…
+      if (drawfx[tile]) then
+        --drawfx[tile]( index*ts + offset_x, screen_height-num_line*ts, ts)
+        drawfx[tile]( index*ts - offset_x - ts , screen_height-num_line*ts, ts, index+(start_tile_x or 0))
       end
+      index = index+1
     end
     num_line = num_line+1
   end

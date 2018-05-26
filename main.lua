@@ -1,4 +1,4 @@
--- $$DATE$$ : jeu. 24 mai 2018 (20:04:22)
+-- $$DATE$$ : sam. 26 mai 2018 (20:13:19)
 
 local world = require"world"
 local draw = require"draw"
@@ -14,6 +14,8 @@ function love.load()
   --world.show_ascii()
 end
 
+--local debug_x=0
+
 local sum_dt = 0
 function love.update(dt)
   if keys["escape"] then love.event.quit() end
@@ -23,13 +25,16 @@ function love.update(dt)
     sum_dt = 0
     player.keyb_event(keys)
     player.apply_gravity()
+    --debug_x = debug_x+0.1
   end
 end
 
 
 function love.draw()
   love.graphics.clear(0.3,0.3,0.3)
-  world.show()
+  local player_x,player_y = player.getpos()
+  local pos_depart_x = 209
+  world.show(player_x-pos_depart_x,0)
   player.draw()
 end
 

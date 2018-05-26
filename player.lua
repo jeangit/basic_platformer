@@ -1,4 +1,4 @@
--- $$DATE$$ : ven. 25 mai 2018 (18:53:37)
+-- $$DATE$$ : sam. 26 mai 2018 (20:11:42)
 
 local x,y = 0,0
 
@@ -32,7 +32,7 @@ end
 function player_draw()
   local r, g, b, a = love.graphics.getColor( )
   love.graphics.setColor( 0.3,0.9,0.5)
-  draw.quad(x, y, player_size, true)
+  draw.quad(x, y, player_size, math.pi/4)
   love.graphics.setColor( r,g,b,a)
 end
 
@@ -59,7 +59,7 @@ function player_apply_gravity()
 
   -- le joueur est peut-être en train de sauter
   if is_jumping then
-    print("jump")
+    --print("jump")
     jump_force = jump_force - jump_force/4
     if jump_force < 1 then
       jump_force = 0
@@ -87,7 +87,7 @@ function player_apply_gravity()
     if fx_slope then
       local ajustement = fx_slope()
       --if ajustement==0 then ajustement=-1 end
-      print(ajustement)
+      --print(ajustement)
       -- le « + tilesize » sert à le remettre à la base de la tuile pentue
       y = y + tilesize - ajustement
     end
@@ -130,7 +130,12 @@ function player_keyboard_event(keys)
   end
 end
 
-return { init = player_init, draw = player_draw, move = player_move, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_gravity = player_apply_gravity }
+local function player_getpos()
+  return x,y
+end
+
+
+return { init = player_init, draw = player_draw, move = player_move, getpos = player_getpos, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_gravity = player_apply_gravity }
 
 
 
