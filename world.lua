@@ -1,4 +1,4 @@
--- $$DATE$$ : dim. 27 mai 2018 (14:54:35)
+-- $$DATE$$ : dim. 27 mai 2018 (20:02:25)
 
 local draw = require"draw"
 
@@ -31,7 +31,10 @@ local function init_world( mapname, screen_w, screen_h, tilesize)
   local is_ok = true
   screen_width = screen_w
   screen_height = screen_h
-  local tile_per_line = screen_width/tilesize
+  -- tile_per_line : valeur bidon suffisament grande pour charger toute la
+  -- map sans se taper deux passes sur le fichier (ce qui serait possible aussi,
+  -- mais vu qu'ensuite je vais parser du Tiled, et abandonner cette routine…)
+  local tile_per_line = 400 --screen_width/tilesize
 
   local hf = io.open( mapname)
   if hf then

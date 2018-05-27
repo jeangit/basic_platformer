@@ -1,4 +1,4 @@
--- $$DATE$$ : sam. 26 mai 2018 (19:49:42)
+-- $$DATE$$ : dim. 27 mai 2018 (19:47:23)
 
 local function draw_tri_up(posx,posy,size)
   love.graphics.polygon('fill', posx,posy, posx+size, posy, posx+size, posy-size) -- pente up
@@ -16,7 +16,7 @@ local function draw_quad(posx,posy,size,fixed_color)
   else
     shade = math.abs(math.sin(fixed_color/8))
   end
-    love.graphics.setColor(shade/4,shade/3,shade/2)
+  love.graphics.setColor(shade/4,shade/3,shade/2)
   love.graphics.polygon('fill',posx,posy,posx,posy-size,posx+size,posy-size,posx+size,posy)
   love.graphics.setColor( r,g,b,a)
 end
