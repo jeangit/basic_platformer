@@ -1,4 +1,4 @@
--- $$DATE$$ : sam. 26 mai 2018 (20:08:43)
+-- $$DATE$$ : dim. 27 mai 2018 (11:33:29)
 
 local draw = require"draw"
 
@@ -64,16 +64,20 @@ local function show_world( cam_x,cam_y)
 
   local start_tile_x = math.floor(cam_x / ts) -- première tuile à lire sur une ligne
   --local offset_x = ts - (cam_x % ts) -- décalage x par rapport à position caméra
-  local offset_x = (cam_x % ts) - ts -- décalage x par rapport à position caméra
+  local offset_x = cam_x % ts  -- décalage x par rapport à position caméra
   --print(start_tile_x, offset_x)
-  if start_tile_x == 0 then start_tile_x = nil end -- ajuster éventuellement index pour fonction «next»
-  print(start_tile_x)
+  if start_tile_x <= 0 then 
+    if cam_x<0 then offset_x=0 end
+    start_tile_x = nil
+  end -- ajuster éventuellement index pour fonction «next»
+  
+  print(start_tile_x, cam_x)
   for line = world_height,1,-1 do
     local index = 0
     for _,tile in next,world[line],start_tile_x do -- nil = 1er element, 1 = 2eme element ligne,…
       if (drawfx[tile]) then
         --drawfx[tile]( index*ts + offset_x, screen_height-num_line*ts, ts)
-        drawfx[tile]( index*ts - offset_x - ts , screen_height-num_line*ts, ts, index+(start_tile_x or 0))
+        drawfx[tile]( index*ts - offset_x , screen_height-num_line*ts, ts, index+(start_tile_x or 0))
       end
       index = index+1
     end
