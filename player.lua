@@ -1,4 +1,4 @@
--- $$DATE$$ : sam. 26 mai 2018 (20:11:42)
+-- $$DATE$$ : dim. 27 mai 2018 (14:44:40)
 
 local x,y = 0,0
 
@@ -15,18 +15,18 @@ local gravity = gravity_base
 local right_slope=47 -- /
 local left_slope=92 -- \
 local world = {}
--- stocker quelques valeurs intéressantes venant de world
-local screen_width, screen_height
-local tilesize
+local tilesize -- récupéré de « world »
+local screen_width, screen_height = 0,0
 
 local draw = require"draw"
 
-function player_init(w)
+function player_init(w, screen_w,screen_h, start_x,start_y)
   world = w
-  screen_width, screen_height = world.screen_dims()
   tilesize = world.get_tilesize()
-  x = 209
-  y = 450
+  screen_width = screen_w
+  screen_height = screen_h
+  x = start_x
+  y = start_y
 end
 
 function player_draw()
