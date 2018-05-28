@@ -1,4 +1,4 @@
--- $$DATE$$ : dim. 27 mai 2018 (19:03:51)
+-- $$DATE$$ : lun. 28 mai 2018 (19:49:14)
 
 local world = require"world"
 local draw = require"draw"
@@ -25,10 +25,12 @@ end
 function update_camera()
   local player_x,player_y = player.getpos()
   local moving_on_x = cam_x-player_x
+  local relative_x = player_x % screen_width
   
-  if moving_on_x~=0 then
+  --print(player_x,relative_x)
+  if moving_on_x~=0 and math.abs(moving_on_x) > screen_width/4 then
       local dir_x = moving_on_x/math.abs(moving_on_x)
-      cam_x = cam_x - dir_x
+      cam_x = cam_x - dir_x*2
   end
    love.graphics.translate(-cam_x + screen_width/2,0)
 end
