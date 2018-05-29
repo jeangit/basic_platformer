@@ -1,4 +1,4 @@
--- $$DATE$$ : lun. 28 mai 2018 (16:28:29)
+-- $$DATE$$ : mar. 29 mai 2018 (18:48:46)
 
 local x,y = 0,0
 
@@ -14,6 +14,7 @@ local gravity = gravity_base
 
 local right_slope=47 -- /
 local left_slope=92 -- \
+local ladder=61 -- =
 local world = {}
 local tilesize -- récupéré de « world »
 local screen_width, screen_height = 0,0
@@ -71,7 +72,9 @@ function player_apply_gravity()
   end
 
 
-  -- application systématique de la gravité
+  -- application systématique de la gravité sauf si échelle
+  if player_get_tile(x+player_middle,y)==ladder then goto no_gravity end
+
   y=y+gravity
   gravity=gravity+gravity_base/2
   -- test y+1 : serons-nous dans une brique après prochaine application de la gravité ?
@@ -80,7 +83,7 @@ function player_apply_gravity()
 
   -- y-1 pour tester la tuile incrite dans la bounding-box du joueur
   local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-1)
-  if tile ~= 0 then
+  if tile ~= 0 and tile ~= ladder then
     y = screen_height - y_tile*world.get_tilesize()
 
     local fx_slope = slopes[tile]
@@ -93,13 +96,18 @@ function player_apply_gravity()
     end
     gravity=gravity_base
   end
+
+::no_gravity::
+
 end
 
 
 function player_jump()
-  -- on ne peut sauter que si on n'est pas déjà en train de
-  -- le faire, et que si on se trouve sur une tuile solide
-  if not is_jumping and player_get_tile(x+player_middle, y+1) ~= 0 then
+  -- on ne peut sauter que si on n'est pas déjà en train de le faire,
+  -- _et_ que si on se trouve sur une tuile solide (sauf échelle)
+  local under_player = player_get_tile(x+player_middle, y+1)
+  local on_player = player_get_tile(x+player_middle, y)
+  if not is_jumping and under_player ~= 0 and on_player ~= ladder then
     speed = speed_base*3
     is_jumping = true
     jump_force = jump_force_max

@@ -1,4 +1,4 @@
--- $$DATE$$ : dim. 27 mai 2018 (20:02:25)
+-- $$DATE$$ : mar. 29 mai 2018 (16:12:48)
 
 local draw = require"draw"
 
@@ -61,7 +61,7 @@ end
 
 -- pour l'instant, on dessine à partir de l'origine: 1,height_world
 local function show_world()
-  local drawfx = { [43] = draw.quad, [47] = draw.tri_up, [92] = draw.tri_down }
+  local drawfx = { [43] = draw.quad, [47] = draw.tri_up, [92] = draw.tri_down, [61] = draw.ladder }
   local num_line = 0
   local ts = world.tilesize
   --local start = screen_height+world_height*tilesize
