@@ -1,4 +1,4 @@
--- $$DATE$$ : mar. 29 mai 2018 (18:48:46)
+-- $$DATE$$ : mar. 29 mai 2018 (20:00:55)
 
 local x,y = 0,0
 
@@ -60,9 +60,9 @@ function player_apply_gravity()
 
   -- le joueur est peut-être en train de sauter
   if is_jumping then
-    --print("jump")
+    local above_player = player_get_tile(x+player_middle, y-player_size-jump_force)
     jump_force = jump_force - jump_force/4
-    if jump_force < 1 then
+    if jump_force < 1 or above_player ~= 0 then
       jump_force = 0
       speed = speed_base
       is_jumping = false
@@ -102,6 +102,8 @@ function player_apply_gravity()
 end
 
 
+-- cette fonction n'est appellée que quand on appuie sur le bouton de saut
+-- elle n'est pas réappellée ensuite pendant que le saut est en cours.
 function player_jump()
   -- on ne peut sauter que si on n'est pas déjà en train de le faire,
   -- _et_ que si on se trouve sur une tuile solide (sauf échelle)
@@ -115,17 +117,29 @@ function player_jump()
 end
 
 
+
+local allowed_move = { [0]=true, [right_slope]=true, [left_slope]=true, [ladder]=true }
 function player_keyboard_event(keys)
   if keys["left"] then
-    player_move(-1,0)
+    local left_tile = player_get_tile(x-1, y-player_middle)
+    --if left_tile == 0 or left_tile == ladder then
+    if allowed_move[left_tile] then
+      player_move(-1,0)
+    end
   elseif keys["right"] then
-    player_move (1,0)
-    -- keys["right"]=false -- debug pour avancer pixel par pixel
+    local right_tile = player_get_tile(x+player_size, y-player_middle)
+    if allowed_move[right_tile] then
+      player_move (1,0)
+    end
   end
   if keys["up"] then
-    player_move (0,-1)
+    if player_get_tile(x+player_middle,y) == ladder then
+      player_move (0,-1)
+    end
   elseif keys["down"] then
-    player_move(0,1)
+    if player_get_tile(x+player_middle,y) == ladder then
+      player_move(0,1)
+    end
   end
   if keys["space"] then
     player_jump()
