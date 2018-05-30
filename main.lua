@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 30 mai 2018 (12:00:15)
+-- $$DATE$$ : mer. 30 mai 2018 (21:22:03)
 
 local world = require"world"
 local draw = require"draw"
@@ -10,15 +10,20 @@ local screen_width, screen_height = 0,0
 
 
 local cam_x,cam_y = 0,0
+local tilesize = 32
+
+function gameover()
+
+end
 
 
 function love.load()
   screen_width, screen_height = love.graphics.getDimensions()
-  local tilesize = 32
   assert (world.init( "data/world.txt", screen_width, screen_height, tilesize))
   player.init(world, screen_width,screen_height, 400,450)
   cam_x, cam_y = player.getpos()
   --world.show_ascii()
+  print(player.foo)
 end
 
 
@@ -32,7 +37,8 @@ function update_camera()
       local dir_x = moving_on_x/math.abs(moving_on_x)
       cam_x = cam_x - dir_x*2
   end
-   love.graphics.translate(-cam_x + screen_width/2,0)
+   -- ne pas afficher la ligne du bas qui est une ligne «tueuse» invisible
+   love.graphics.translate(-cam_x + screen_width/2,tilesize)
 end
 
 
@@ -45,6 +51,7 @@ function love.update(dt)
     sum_dt = 0
     player.keyb_event(keys)
     player.apply_physic()
+    if not player.is_alive then gameover() end
   end
 end
 

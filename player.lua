@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 30 mai 2018 (16:43:07)
+-- $$DATE$$ : mer. 30 mai 2018 (21:21:04)
 
 local x,y = 0,0
 
@@ -11,6 +11,9 @@ local speed_base = 1 -- essayer avec des valeurs non multiples de tilesize
 local speed = speed_base
 local gravity_base = 0.9 -- doit être inférieur à 1 pour éviter un problème de scintillement
 local gravity = gravity_base
+
+local is_alive = true
+
 
 local right_slope=47 -- /
 local left_slope=92 -- \
@@ -81,6 +84,10 @@ function player_apply_gravity()
 
   -- y-1 pour tester la tuile incrite dans la bounding-box du joueur
   local tile, x_tile,y_tile = player_get_tile(x+player_middle, y-1)
+
+  -- TODO: tester si on a touché une tuile avec caractéristique particulière
+  --       par exemple la tuile «tueuse» du bas de l'écran
+  print (tile)
   if tile ~= 0 and tile ~= ladder then
     y = screen_height - y_tile*world.get_tilesize()
 
@@ -113,7 +120,7 @@ end
 
 -- cette fonction n'est appellée que quand on appuie sur le bouton de saut
 -- elle n'est pas réappellée ensuite pendant que le saut est en cours.
-function player_jump()
+function player_init_jump()
   -- on ne peut sauter que si on n'est pas déjà en train de le faire,
   -- _et_ que si on se trouve sur une tuile solide (sauf échelle)
   local under_player = player_get_tile(x+player_middle, y+1)
@@ -151,7 +158,7 @@ function player_keyboard_event(keys)
     end
   end
   if keys["space"] then
-    player_jump()
+    player_init_jump()
   end
 
   if keys["rshift"] or keys["lshift"] then
@@ -165,8 +172,12 @@ local function player_getpos()
   return x,y
 end
 
+local function player_is_alive()
+  return is_alive
+end
 
-return { init = player_init, draw = player_draw, move = player_move, getpos = player_getpos, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_physic = player_apply_physic }
+
+return { init = player_init, draw = player_draw, move = player_move, getpos = player_getpos, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_physic = player_apply_physic, is_alive = player_is_alive }
 
 
 
