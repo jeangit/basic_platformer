@@ -1,4 +1,4 @@
--- $$DATE$$ : mar. 29 mai 2018 (20:00:55)
+-- $$DATE$$ : mer. 30 mai 2018 (16:43:07)
 
 local x,y = 0,0
 
@@ -52,33 +52,31 @@ function player_move(dir_x,dir_y)
 end
 
 
+
+function player_apply_jump()
+  jump_force = jump_force - jump_force/4
+  -- stopper le saut si le joueur va se cogner contre une tuile
+  local above_player = player_get_tile(x+player_middle, y-player_size-jump_force)
+  if jump_force < 1 or above_player ~= 0 then
+    jump_force = 0
+    speed = speed_base
+    is_jumping = false
+  else
+    y = y - jump_force
+  end
+end
+
+
 function player_apply_gravity()
   local slopes = {
     [right_slope] = function() return (x+player_middle)%tilesize end,
     [left_slope] = function() return tilesize-((x+player_middle)%tilesize) end
   }
 
-  -- le joueur est peut-être en train de sauter
-  if is_jumping then
-    local above_player = player_get_tile(x+player_middle, y-player_size-jump_force)
-    jump_force = jump_force - jump_force/4
-    if jump_force < 1 or above_player ~= 0 then
-      jump_force = 0
-      speed = speed_base
-      is_jumping = false
-    else
-      y = y - jump_force
-    end
-  end
-
-
-  -- application systématique de la gravité sauf si échelle
-  if player_get_tile(x+player_middle,y)==ladder then goto no_gravity end
-
   y=y+gravity
   gravity=gravity+gravity_base/2
   -- test y+1 : serons-nous dans une brique après prochaine application de la gravité ?
-  -- ( si oui: y-1 -> workaround anti-scintillement du joueur )
+  -- ( si oui: y-gravity_base -> workaround anti-scintillement du joueur )
   if player_get_tile(x+player_middle,y+1)~=0 then y=y-gravity_base end
 
   -- y-1 pour tester la tuile incrite dans la bounding-box du joueur
@@ -89,7 +87,6 @@ function player_apply_gravity()
     local fx_slope = slopes[tile]
     if fx_slope then
       local ajustement = fx_slope()
-      --if ajustement==0 then ajustement=-1 end
       --print(ajustement)
       -- le « + tilesize » sert à le remettre à la base de la tuile pentue
       y = y + tilesize - ajustement
@@ -97,7 +94,19 @@ function player_apply_gravity()
     gravity=gravity_base
   end
 
-::no_gravity::
+
+end
+
+
+function player_apply_physic()
+  if is_jumping then
+    player_apply_jump()
+  end
+
+  -- application systématique de la gravité sauf si échelle
+  if player_get_tile(x+player_middle,y) ~= ladder then
+    player_apply_gravity()
+  end
 
 end
 
@@ -157,7 +166,7 @@ local function player_getpos()
 end
 
 
-return { init = player_init, draw = player_draw, move = player_move, getpos = player_getpos, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_gravity = player_apply_gravity }
+return { init = player_init, draw = player_draw, move = player_move, getpos = player_getpos, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_physic = player_apply_physic }
 
 
 

@@ -1,4 +1,4 @@
--- $$DATE$$ : lun. 28 mai 2018 (19:49:14)
+-- $$DATE$$ : mer. 30 mai 2018 (12:00:15)
 
 local world = require"world"
 local draw = require"draw"
@@ -26,7 +26,7 @@ function update_camera()
   local player_x,player_y = player.getpos()
   local moving_on_x = cam_x-player_x
   local relative_x = player_x % screen_width
-  
+
   --print(player_x,relative_x)
   if moving_on_x~=0 and math.abs(moving_on_x) > screen_width/4 then
       local dir_x = moving_on_x/math.abs(moving_on_x)
@@ -44,7 +44,7 @@ function love.update(dt)
   if sum_dt >= refresh then
     sum_dt = 0
     player.keyb_event(keys)
-    player.apply_gravity()
+    player.apply_physic()
   end
 end
 
