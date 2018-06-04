@@ -1,4 +1,4 @@
--- $$DATE$$ : mer. 30 mai 2018 (21:19:34)
+-- $$DATE$$ : lun. 04 juin 2018 (20:12:29)
 
 local draw = require"draw"
 
@@ -111,6 +111,16 @@ local function get_tilesize_world()
   return world.tilesize
 end
 
+local function get_tiles_around(x,y,width,height)
+  local middle_width = width/2
+  local middle_height = height/2
+  local tiles = {}
+  tiles.under = get_tile_world( x+middle_width, y+1)
+  tiles.on = get_tile_world( x+middle_width, y-1)
+  --tiles.debug = get_tile_world( x+middle_width, y)
+
+  return tiles
+end
 
 
-return { show_ascii = show_ascii_world, show = show_world, init = init_world, get_tile = get_tile_world, get_tilesize = get_tilesize_world }
+return { show_ascii = show_ascii_world, show = show_world, init = init_world, get_tile = get_tile_world, get_tiles_around = get_tiles_around ,get_tilesize = get_tilesize_world }

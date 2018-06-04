@@ -1,8 +1,8 @@
--- $$DATE$$ : mer. 30 mai 2018 (21:22:03)
+-- $$DATE$$ : lun. 04 juin 2018 (16:15:11)
 
 local world = require"world"
 local draw = require"draw"
-local player = require"player"
+local player_factory = require"player"
 
 local keys = {}
 local refresh = 1/70
@@ -20,7 +20,7 @@ end
 function love.load()
   screen_width, screen_height = love.graphics.getDimensions()
   assert (world.init( "data/world.txt", screen_width, screen_height, tilesize))
-  player.init(world, screen_width,screen_height, 400,450)
+  player = player_factory.new(world, screen_width,screen_height, 400,450)
   cam_x, cam_y = player.getpos()
   --world.show_ascii()
   print(player.foo)
@@ -49,7 +49,7 @@ function love.update(dt)
   sum_dt = sum_dt + dt
   if sum_dt >= refresh then
     sum_dt = 0
-    player.keyb_event(keys)
+    player.keyboard_events(keys)
     player.apply_physic()
     if not player.is_alive then gameover() end
   end

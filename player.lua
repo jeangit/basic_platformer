@@ -1,9 +1,7 @@
--- $$DATE$$ : mer. 30 mai 2018 (21:21:04)
+-- $$DATE$$ : lun. 04 juin 2018 (20:12:59)
 
 local x,y = 0,0
 
-local player_size = 10
-local player_middle = player_size/2
 local jump_force_max = 50
 local jump_force = 0
 local is_jumping = false
@@ -24,27 +22,18 @@ local screen_width, screen_height = 0,0
 
 local draw = require"draw"
 
-function player_init(w, screen_w,screen_h, start_x,start_y)
-  world = w
-  tilesize = world.get_tilesize()
-  screen_width = screen_w
-  screen_height = screen_h
-  x = start_x
-  y = start_y
+local function get_player_size()
+
+  -- TODO
+  -- utiliser la taille de la bounding box
+
+  local width,height = 10,10 -- DEBUG ! À virer par la suite !
+
+  return width,height
+
 end
 
-function player_draw()
-  local r, g, b, a = love.graphics.getColor( )
-  love.graphics.setColor( 0.3,0.9,0.5)
-  draw.quad(x, y, player_size, math.pi/4)
-  love.graphics.setColor( r,g,b,a)
-end
-
-function player_get_tile(x_pixel, y_pixel)
-  return world.get_tile(x_pixel,y_pixel)
-end
-
-function player_move(dir_x,dir_y)
+local function player_move(dir_x,dir_y)
 
   local new_x = x + (dir_x * speed)
   local new_y = y + (dir_y * speed)
@@ -56,7 +45,10 @@ end
 
 
 
-function player_apply_jump()
+local function player_apply_jump()
+  local player_size = get_player_size()
+  local player_middle = player_size/2
+
   jump_force = jump_force - jump_force/4
   -- stopper le saut si le joueur va se cogner contre une tuile
   local above_player = player_get_tile(x+player_middle, y-player_size-jump_force)
@@ -70,11 +62,13 @@ function player_apply_jump()
 end
 
 
-function player_apply_gravity()
+local function player_apply_gravity()
+  local player_middle = get_player_size()/2
   local slopes = {
     [right_slope] = function() return (x+player_middle)%tilesize end,
     [left_slope] = function() return tilesize-((x+player_middle)%tilesize) end
   }
+
 
   y=y+gravity
   gravity=gravity+gravity_base/2
@@ -100,27 +94,14 @@ function player_apply_gravity()
     end
     gravity=gravity_base
   end
-
-
 end
-
-
-function player_apply_physic()
-  if is_jumping then
-    player_apply_jump()
-  end
-
-  -- application systématique de la gravité sauf si échelle
-  if player_get_tile(x+player_middle,y) ~= ladder then
-    player_apply_gravity()
-  end
-
-end
-
 
 -- cette fonction n'est appellée que quand on appuie sur le bouton de saut
 -- elle n'est pas réappellée ensuite pendant que le saut est en cours.
-function player_init_jump()
+local function player_init_jump()
+
+  local player_middle = get_player_size()/2
+
   -- on ne peut sauter que si on n'est pas déjà en train de le faire,
   -- _et_ que si on se trouve sur une tuile solide (sauf échelle)
   local under_player = player_get_tile(x+player_middle, y+1)
@@ -134,50 +115,107 @@ end
 
 
 
-local allowed_move = { [0]=true, [right_slope]=true, [left_slope]=true, [ladder]=true }
-function player_keyboard_event(keys)
-  if keys["left"] then
-    local left_tile = player_get_tile(x-1, y-player_middle)
-    --if left_tile == 0 or left_tile == ladder then
-    if allowed_move[left_tile] then
-      player_move(-1,0)
-    end
-  elseif keys["right"] then
-    local right_tile = player_get_tile(x+player_size, y-player_middle)
-    if allowed_move[right_tile] then
-      player_move (1,0)
-    end
-  end
-  if keys["up"] then
-    if player_get_tile(x+player_middle,y) == ladder then
-      player_move (0,-1)
-    end
-  elseif keys["down"] then
-    if player_get_tile(x+player_middle,y) == ladder then
-      player_move(0,1)
-    end
-  end
-  if keys["space"] then
-    player_init_jump()
-  end
 
-  if keys["rshift"] or keys["lshift"] then
-    -- SAUVAGERIE! (c'est pour débugger, chef!)
-    keys["right"]=false
-    keys["left"]=false
-  end
-end
-
-local function player_getpos()
-  return x,y
-end
-
-local function player_is_alive()
-  return is_alive
+function player_get_tile(x_pixel, y_pixel)
+  return world.get_tile(x_pixel,y_pixel)
 end
 
 
-return { init = player_init, draw = player_draw, move = player_move, getpos = player_getpos, jump = player_jump, keyb_event = player_keyboard_event, get_tile = player_get_tile, apply_physic = player_apply_physic, is_alive = player_is_alive }
+function player_new(w, screen_w,screen_h, start_x,start_y)
+  world = w
+  tilesize = world.get_tilesize()
+  screen_width = screen_w
+  screen_height = screen_h
+  x = start_x
+  y = start_y
+
+  return {
+    draw = function()
+      local player_size = get_player_size()
+      local r, g, b, a = love.graphics.getColor( )
+      love.graphics.setColor( 0.3,0.9,0.5)
+      draw.quad(x, y, player_size, math.pi/4)
+      love.graphics.setColor( r,g,b,a)
+    end,
+
+    get_tile = function(x_pixel, y_pixel)
+      return world.get_tile(x_pixel,y_pixel)
+    end,
+
+    player_move = function(dir_x,dir_y)
+      local new_x = x + (dir_x * speed)
+      local new_y = y + (dir_y * speed)
+      x = new_x
+      y = new_y
+    end,
+
+    apply_physic = function()
+      local player_width, player_height = get_player_size()
+      local tiles = world.get_tiles_around(x,y, player_width,player_height)
+      if is_jumping then
+        player_apply_jump()
+      end
+      -- application systématique de la gravité sauf si échelle
+       --if player_get_tile(x+player_middle,y) ~= ladder then
+       if tiles.under ~= ladder then
+         -- TODO: reprendre ici, et passer «tiles» à «player_apply_gravity»
+         -- TODO: afficher les tuiles calculées à l'écran (et non en console)
+        player_apply_gravity()
+       end
+    end,
+
+    keyboard_events = function(keys)
+      local allowed_move = { [0]=true, [right_slope]=true, [left_slope]=true, [ladder]=true }
+      local player_size = get_player_size()
+      local player_middle = player_size/2
+
+      if keys["left"] then
+        local left_tile = player_get_tile(x-1, y-player_middle)
+        --if left_tile == 0 or left_tile == ladder then
+        if allowed_move[left_tile] then
+          player_move(-1,0)
+        end
+      elseif keys["right"] then
+        local right_tile = player_get_tile(x+player_size, y-player_middle)
+        if allowed_move[right_tile] then
+          player_move (1,0)
+        end
+      end
+
+      if keys["up"] then
+        if player_get_tile(x+player_middle,y) == ladder then
+          player_move (0,-1)
+        end
+      elseif keys["down"] then
+        if player_get_tile(x+player_middle,y) == ladder then
+          player_move(0,1)
+        end
+      end
+
+      if keys["space"] then
+        player_init_jump()
+      end
+
+      if keys["rshift"] or keys["lshift"] then
+        -- SAUVAGERIE! (c'est pour débugger, chef!)
+        keys["right"]=false
+        keys["left"]=false
+      end
+    end,
+
+    getpos = function()
+      return x,y
+    end,
+
+    is_alive = function()
+      return is_alive
+    end
+   }
+
+ end
+
+
+return { new = player_new }
 
 
 
