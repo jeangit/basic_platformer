@@ -1,4 +1,4 @@
--- $$DATE$$ : lun. 04 juin 2018 (16:15:11)
+-- $$DATE$$ : mar. 05 juin 2018 (13:46:06)
 
 local world = require"world"
 local draw = require"draw"
@@ -49,8 +49,9 @@ function love.update(dt)
   sum_dt = sum_dt + dt
   if sum_dt >= refresh then
     sum_dt = 0
-    player.keyboard_events(keys)
-    player.apply_physic()
+    local tiles_around_player = player.get_tiles_around()
+    player.keyboard_events(keys, tiles_around_player)
+    player.apply_physic(tiles_around_player)
     if not player.is_alive then gameover() end
   end
 end

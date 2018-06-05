@@ -1,4 +1,4 @@
--- $$DATE$$ : lun. 04 juin 2018 (20:12:29)
+-- $$DATE$$ : mar. 05 juin 2018 (13:46:25)
 
 local draw = require"draw"
 
@@ -69,11 +69,11 @@ local function show_world()
   --[[
   local start_tile_x = math.floor(cam_x / ts) -- première tuile à lire sur une ligne
   local offset_x = cam_x % ts  -- décalage x par rapport à position caméra
-  if start_tile_x <= 0 then 
+  if start_tile_x <= 0 then
     if cam_x<0 then offset_x=0 end
     start_tile_x = nil
   end -- ajuster éventuellement index pour fonction «next»
---]]  
+--]]
 
   for line = world_height,1,-1 do
     local index = 0
@@ -117,6 +117,9 @@ local function get_tiles_around(x,y,width,height)
   local tiles = {}
   tiles.under = get_tile_world( x+middle_width, y+1)
   tiles.on = get_tile_world( x+middle_width, y-1)
+  tiles.left = get_tile_world( x-1, y-middle_height)
+  tiles.right = get_tile_world( x+width, y-middle_height)
+
   --tiles.debug = get_tile_world( x+middle_width, y)
 
   return tiles
